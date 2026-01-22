@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="da">
+<head>
+<meta charset="UTF-8">
+<link rel="manifest" href="manifest.json">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Solnedgang Vejr</title>
+
+<style>
+/* ===== BASIS ===== */
+body {
+   margin: 0;
+   font-family: Arial, sans-serif;
+   color: white;
+   display: flex;
+   justify-content: center;
+   align-items: center;
+   height: 100vh;
+   overflow: hidden;
+   transition: background 0.6s ease;
+   background: linear-gradient(to bottom,
+      #0a1a3b 0%,
+      #3d1e6e 50%,
+      #ff7e5f 70%,
+      #feb47b 80%,
+      #87ceeb 100%);
+}
+
+/* ===== VEJR-BAGGRUNDE ===== */
+body.sunny {
+   background: linear-gradient(to bottom, #87ceeb, #fefcea, #f1da36);
+}
+
+body.cloudy {
+   background: linear-gradient(to bottom, #5f5f5f, #8a8a8a, #bdbdbd);
+}
+
+body.night {
+   background: linear-gradient(to bottom, #020111, #191970, #000000);
+}
+
+/* ===== IKON I BUNDEN ===== */
+#skyIcon {
+   position: absolute;
+   bottom: 210px;
+   left: 50%;
+   transform: translateX(-50%);
+   width: 160px;
+   height: 160px;
+   background-size: contain;
+   background-repeat: no-repeat;
+   background-position: center;
+   z-index: 0;
+}
+
+/* ===== HAV ===== */
+.ocean {
+   position: absolute;
+   bottom: 0;
+   width: 100%;
+   height: 200px;
+   background: linear-gradient(to top, #0b3d91, #1e90ff 70%, rgba(255,255,255,0.1));
+   z-index: 0;
+}
+
+/* Fjern KUN hav når baggrund skifter */
+body.sunny .ocean,
+body.cloudy .ocean,
+body.night .ocean {
+   display: none;
+}
+
+/* ===== CONTAINER ===== */
+.container {
+   width: 900px;
+   background: rgba(0,0,0,0.25);
+   backdrop-filter: blur(10px);
+   padding: 30px;
+   border-radius: 20px;
+   z-index: 1;
+}
+
+input, button {
+   padding: 12px;
+   font-size: 16px;
+   border-radius: 10px;
+   border: none;
+}
+
+button {
+   background: rgba(255,255,255,0.3);
+   color: white;
+   cursor: pointer;
+}
+
+.city { font-size: 36px; margin-top: 20px; }
+.temp { font-size: 72px; font-weight: bold; }
+.desc { font-size: 20px; opacity: 0.9; }
+
+.hourly {
+   display: flex;
+   gap: 15px;
+   overflow-x: auto;
+   margin-top: 20px;
+}
+
+.hour, .day {
+   min-width: 100px;
+   text-align: center;
+   background: rgba(255,255,255,0.2);
+   padding: 10px;
+   border-radius: 15px;
+}
+
+.hour img, .day img {
+   width: 50px;
+}
+
+#daily {
+   display: flex;
+   gap: 15px;
+   margin-top: 20px;
+   overflow-x: auto;
+}
+</style>
+</head>
+
+<body>
+
+<div id="skyIcon"></div>
+<div class="ocean"></div>
+
+<div class="container">
+   <div>
+      <input id="city" placeholder="Søg på by (fx København)">
+      <button onclick="loadWeather()">Søg</button>
+   </div>
+
+   <div class="city" id="cityName"></div>
+   <div class="temp" id="temp"></div>
+   <div class="desc" id="desc"></div>
+
+   <div class="hourly" id="hourly"></div>
+   <div id="daily"></div>
+</div>
+
+<script>
+const apiKey = "93e77471c08a4a84b805f0116e657fc6";
+
+/* ENTER */
+document.getElementById("city").addEventListener("keypress", e => {
+   if (e.key === "Enter") loadWeather();
+});
+
+/* ===== IKON-LOGIK ===== */
+function getWeatherIcon(weather, windSpeed, iconCode, temp) {
+   if (windSpeed >= 10) return "vind.svg";
+   if (iconCode.includes("n")) return "måne.svg";
+   if (weather === "Clouds" || temp <= 5) return "overskyddet.svg";
+   if (weather === "Rain") return "regn.svg";
+   if (weather === "Clear") return "sol.svg";
+   return "overskyddet.svg";
+}
+
+/* ===== BAGGRUND ===== */
+function setBackground(weather, iconCode, temp) {
+   document.body.classList.remove("sunny", "cloudy", "night");
+
+   if (iconCode.includes("n")) {
+      document.body.classList.add("night");
+   } else if (weather === "Clouds" || temp <= 5) {
+      document.body.classList.add("cloudy");
+   } else if (weather === "Clear") {
+      document.body.classList.add("sunny");
+   }
+}
+
+/* ===== HENT VEJR ===== */
+function loadWeather() {
+   const city = document.getElementById("city").value;
+
+   fetch(`https://api.openweathermap.org/data/2.5/weather?q=${city}&units=metric&lang=da&appid=${apiKey}`)
+   .then(r => r.json())
+   .then(d => {
+      document.getElementById("cityName").innerText = d.name;
+      document.getElementById("temp").innerText = Math.round(d.main.temp) + "°";
+      document.getElementById("desc").innerText = d.weather[0].description;
+
+      setBackground(d.weather[0].main, d.weather[0].icon, d.main.temp);
+
+      const icon = getWeatherIcon(
+         d.weather[0].main,
+         d.wind.speed,
+         d.weather[0].icon,
+         d.main.temp
+      );
+
+      document.getElementById("skyIcon").style.backgroundImage = `url(${icon})`;
+   });
+
+   fetch(`https://api.openweathermap.org/data/2.5/forecast?q=${city}&units=metric&lang=da&appid=${apiKey}`)
+   .then(r => r.json())
+   .then(d => {
+      document.getElementById("hourly").innerHTML = "";
+      document.getElementById("daily").innerHTML = "";
+
+      d.list.slice(0,8).forEach(h => {
+         const hour = new Date(h.dt_txt).getHours();
+         const icon = getWeatherIcon(h.weather[0].main, h.wind.speed, h.weather[0].icon, h.main.temp);
+
+         hourly.innerHTML += `
+         <div class="hour">
+            <div>${hour}:00</div>
+            <img src="${icon}">
+            <div>${Math.round(h.main.temp)}°</div>
+         </div>`;
+      });
+
+      const days = new Map();
+      d.list.forEach(item => {
+         if (item.dt_txt.includes("12:00:00") && days.size < 5) {
+            const day = new Date(item.dt_txt).toLocaleDateString("da-DK",{weekday:"short"});
+            if (!days.has(day)) days.set(day, item);
+         }
+      });
+
+      days.forEach(item => {
+         const dayName = new Date(item.dt_txt).toLocaleDateString("da-DK",{weekday:"short"});
+         const icon = getWeatherIcon(item.weather[0].main, item.wind.speed, item.weather[0].icon, item.main.temp);
+
+         daily.innerHTML += `
+         <div class="day">
+            <div>${dayName}</div>
+            <img src="${icon}">
+            <div>${Math.round(item.main.temp)}°</div>
+         </div>`;
+      });
+   });
+}
+</script>
+
+</body>
+</html>

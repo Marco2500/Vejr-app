@@ -57,7 +57,7 @@ body.night .ocean { display: none; }
 /* ===== CONTAINER SMALLERE ===== */
 .container {
    width: 100%;
-   max-width: 400px; /* SMALLERE */
+   max-width: 400px;
    background: rgba(0,0,0,0.25);
    backdrop-filter: blur(10px);
    padding: 20px;
@@ -74,7 +74,7 @@ body.night .ocean { display: none; }
 
 .container > div:first-child input,
 .container > div:first-child button {
-   width: 200px;  /* Lidt smallere */
+   width: 200px;
    padding: 10px;
    font-size: 15px;
    border-radius: 10px;
@@ -96,7 +96,7 @@ button { background: rgba(255,255,255,0.3); color: white; cursor: pointer; }
 }
 
 .hour, .day {
-   min-width: 70px; /* SMALLERE */
+   min-width: 70px;
    text-align: center;
    background: rgba(255,255,255,0.2);
    padding: 6px;
@@ -106,12 +106,14 @@ button { background: rgba(255,255,255,0.3); color: white; cursor: pointer; }
 
 .hour img, .day img { width: 30px; }
 
+/* ===== SMALLERE PÅ TELEFON ===== */
 @media (max-width: 600px) {
    .container { max-width: 320px; padding: 14px; }
    .city { font-size: 20px; }
    .temp { font-size: 40px; }
    .desc { font-size: 14px; }
-   #skyIcon { width: 80px; height: 80px; bottom: 140px; }
+   #skyIcon { width: 80px; height: 80px; bottom: 80px; } /* længere ned */
+   .ocean { height: 140px; } /* havet kan også justeres */
    .hour, .day { min-width: 60px; padding: 5px; font-size: 12px; }
    .hour img, .day img { width: 28px; }
    .container > div:first-child input,
@@ -183,7 +185,6 @@ function loadWeather() {
       hourly.innerHTML = "";
       daily.innerHTML = "";
 
-      // Timer
       d.list.slice(0,8).forEach(h => {
          const hour = new Date(h.dt_txt).getHours();
          hourly.innerHTML += `
@@ -194,7 +195,6 @@ function loadWeather() {
          </div>`;
       });
 
-      // Dage
       const days = new Map();
       d.list.forEach(item => {
          if (item.dt_txt.includes("12:00:00") && days.size < 5) {

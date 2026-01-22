@@ -3,11 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<link rel="manifest" href="manifest.json">
 <title>Solnedgang Vejr</title>
 
 <style>
-/* ===== BASIS ===== */
 body {
    margin: 0;
    font-family: Arial, sans-serif;
@@ -15,8 +13,8 @@ body {
    display: flex;
    justify-content: center;
    align-items: center;
-   min-height: 100vh;
-   overflow-x: hidden;
+   height: 100vh;
+   overflow: hidden;
    transition: background 0.6s ease;
    background: linear-gradient(to bottom,
       #0a1a3b 0%,
@@ -26,164 +24,103 @@ body {
       #87ceeb 100%);
 }
 
-/* ===== VEJR-BAGGRUNDE ===== */
-body.sunny {
-   background: linear-gradient(to bottom, #87ceeb, #fefcea, #f1da36);
-}
-body.cloudy {
-   background: linear-gradient(to bottom, #5f5f5f, #8a8a8a, #bdbdbd);
-}
-body.night {
-   background: linear-gradient(to bottom, #020111, #191970, #000000);
-}
+body.sunny { background: linear-gradient(to bottom, #87ceeb, #fefcea, #f1da36); }
+body.cloudy { background: linear-gradient(to bottom, #5f5f5f, #8a8a8a, #bdbdbd); }
+body.night { background: linear-gradient(to bottom, #020111, #191970, #000000); }
 
-/* ===== IKON ===== */
 #skyIcon {
    position: absolute;
-   bottom: 210px;
+   bottom: 190px;
    left: 50%;
    transform: translateX(-50%);
-   width: 160px;
-   height: 160px;
+   width: 130px;
+   height: 130px;
    background-size: contain;
    background-repeat: no-repeat;
    background-position: center;
    z-index: 0;
 }
 
-/* ===== HAV ===== */
 .ocean {
    position: absolute;
    bottom: 0;
    width: 100%;
-   height: 200px;
+   height: 180px;
    background: linear-gradient(to top, #0b3d91, #1e90ff 70%, rgba(255,255,255,0.1));
    z-index: 0;
 }
 
 body.sunny .ocean,
 body.cloudy .ocean,
-body.night .ocean {
-   display: none;
-}
+body.night .ocean { display: none; }
 
-/* ===== CONTAINER ===== */
+/* ===== CONTAINER SMALLERE ===== */
 .container {
-   width: 900px;
-   max-width: 95%;
+   width: 100%;
+   max-width: 400px; /* SMALLERE */
    background: rgba(0,0,0,0.25);
    backdrop-filter: blur(10px);
-   padding: 30px;
-   border-radius: 20px;
+   padding: 20px;
+   border-radius: 16px;
    z-index: 1;
 }
 
-input, button {
-   padding: 12px;
-   font-size: 16px;
+/* Søgefelt og knap samme bredde */
+.container > div:first-child {
+   display: flex;
+   flex-direction: column;
+   align-items: center;
+}
+
+.container > div:first-child input,
+.container > div:first-child button {
+   width: 200px;  /* Lidt smallere */
+   padding: 10px;
+   font-size: 15px;
    border-radius: 10px;
    border: none;
+   margin-bottom: 6px;
 }
 
-button {
-   background: rgba(255,255,255,0.3);
-   color: white;
-   cursor: pointer;
-}
+button { background: rgba(255,255,255,0.3); color: white; cursor: pointer; }
 
-.city { font-size: 36px; margin-top: 20px; }
-.temp { font-size: 72px; font-weight: bold; }
-.desc { font-size: 20px; opacity: 0.9; }
+.city { font-size: 24px; margin-top: 12px; text-align: center; }
+.temp { font-size: 48px; font-weight: bold; text-align: center; }
+.desc { font-size: 16px; opacity: 0.9; text-align: center; }
 
-.hourly {
+.hourly, #daily {
    display: flex;
-   gap: 15px;
+   gap: 10px;
    overflow-x: auto;
-   margin-top: 20px;
+   margin-top: 14px;
 }
 
 .hour, .day {
-   min-width: 100px;
+   min-width: 70px; /* SMALLERE */
    text-align: center;
    background: rgba(255,255,255,0.2);
-   padding: 10px;
-   border-radius: 15px;
+   padding: 6px;
+   border-radius: 12px;
+   font-size: 13px;
 }
 
-.hour img, .day img {
-   width: 50px;
-}
+.hour img, .day img { width: 30px; }
 
-#daily {
-   display: flex;
-   gap: 15px;
-   margin-top: 20px;
-   overflow-x: auto;
-}
-
-/* ===== MOBIL ===== */
-@media (max-width: 768px) {
-
-   body {
-      align-items: flex-start;
-      padding-top: 20px;
-   }
-
-   .container {
-      padding: 16px;
-      border-radius: 14px;
-   }
-
-   .container > div:first-child {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-   }
-
-   input, button {
-      width: 100%;
-      font-size: 18px;
-   }
-
-   .city {
-      font-size: 26px;
-      text-align: center;
-   }
-
-   .temp {
-      font-size: 54px;
-      text-align: center;
-   }
-
-   .desc {
-      font-size: 17px;
-      text-align: center;
-   }
-
-   #skyIcon {
-      width: 100px;
-      height: 100px;
-      bottom: 160px;
-   }
-
-   .ocean {
-      height: 120px;
-   }
-
-   .hour, .day {
-      min-width: 75px;
-      padding: 8px;
-   }
-
-   .hour img, .day img {
-      width: 36px;
-   }
+@media (max-width: 600px) {
+   .container { max-width: 320px; padding: 14px; }
+   .city { font-size: 20px; }
+   .temp { font-size: 40px; }
+   .desc { font-size: 14px; }
+   #skyIcon { width: 80px; height: 80px; bottom: 140px; }
+   .hour, .day { min-width: 60px; padding: 5px; font-size: 12px; }
+   .hour img, .day img { width: 28px; }
+   .container > div:first-child input,
+   .container > div:first-child button { width: 180px; }
 }
 </style>
 </head>
 
 <body>
-
 <div id="skyIcon"></div>
 <div class="ocean"></div>
 
@@ -219,14 +156,9 @@ function getWeatherIcon(weather, windSpeed, iconCode, temp) {
 
 function setBackground(weather, iconCode, temp) {
    document.body.classList.remove("sunny", "cloudy", "night");
-
-   if (iconCode.includes("n")) {
-      document.body.classList.add("night");
-   } else if (weather === "Clouds" || temp <= 5) {
-      document.body.classList.add("cloudy");
-   } else if (weather === "Clear") {
-      document.body.classList.add("sunny");
-   }
+   if (iconCode.includes("n")) document.body.classList.add("night");
+   else if (weather === "Clouds" || temp <= 5) document.body.classList.add("cloudy");
+   else if (weather === "Clear") document.body.classList.add("sunny");
 }
 
 function loadWeather() {
@@ -240,15 +172,9 @@ function loadWeather() {
       desc.innerText = d.weather[0].description;
 
       setBackground(d.weather[0].main, d.weather[0].icon, d.main.temp);
-
-      const icon = getWeatherIcon(
-         d.weather[0].main,
-         d.wind.speed,
-         d.weather[0].icon,
-         d.main.temp
-      );
-
-      skyIcon.style.backgroundImage = `url(${icon})`;
+      skyIcon.style.backgroundImage = `url(${getWeatherIcon(
+         d.weather[0].main, d.wind.speed, d.weather[0].icon, d.main.temp
+      )})`;
    });
 
    fetch(`https://api.openweathermap.org/data/2.5/forecast?q=${city}&units=metric&lang=da&appid=${apiKey}`)
@@ -257,18 +183,18 @@ function loadWeather() {
       hourly.innerHTML = "";
       daily.innerHTML = "";
 
+      // Timer
       d.list.slice(0,8).forEach(h => {
          const hour = new Date(h.dt_txt).getHours();
-         const icon = getWeatherIcon(h.weather[0].main, h.wind.speed, h.weather[0].icon, h.main.temp);
-
          hourly.innerHTML += `
          <div class="hour">
             <div>${hour}:00</div>
-            <img src="${icon}">
+            <img src="${getWeatherIcon(h.weather[0].main, h.wind.speed, h.weather[0].icon, h.main.temp)}">
             <div>${Math.round(h.main.temp)}°</div>
          </div>`;
       });
 
+      // Dage
       const days = new Map();
       d.list.forEach(item => {
          if (item.dt_txt.includes("12:00:00") && days.size < 5) {
@@ -291,6 +217,5 @@ function loadWeather() {
    });
 }
 </script>
-
 </body>
 </html>

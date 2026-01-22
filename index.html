@@ -54,7 +54,6 @@ body.sunny .ocean,
 body.cloudy .ocean,
 body.night .ocean { display: none; }
 
-/* ===== CONTAINER SMALLERE ===== */
 .container {
    width: 100%;
    max-width: 400px;
@@ -65,7 +64,6 @@ body.night .ocean { display: none; }
    z-index: 1;
 }
 
-/* Søgefelt og knap samme bredde */
 .container > div:first-child {
    display: flex;
    flex-direction: column;
@@ -106,14 +104,14 @@ button { background: rgba(255,255,255,0.3); color: white; cursor: pointer; }
 
 .hour img, .day img { width: 30px; }
 
-/* ===== SMALLERE PÅ TELEFON ===== */
+/* ===== PÅ MOBIL ===== */
 @media (max-width: 600px) {
    .container { max-width: 320px; padding: 14px; }
    .city { font-size: 20px; }
    .temp { font-size: 40px; }
-   .desc { font-size: 14px; }
-   #skyIcon { width: 80px; height: 80px; bottom: 80px; } /* længere ned */
-   .ocean { height: 140px; } /* havet kan også justeres */
+   .desc { font-size: 14px; text-align: center; }
+   #skyIcon { width: 80px; height: 80px; bottom: 10px; } /* Længere nede på skærmen */
+   .ocean { height: 120px; }
    .hour, .day { min-width: 60px; padding: 5px; font-size: 12px; }
    .hour img, .day img { width: 28px; }
    .container > div:first-child input,
